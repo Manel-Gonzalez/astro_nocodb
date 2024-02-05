@@ -1,9 +1,54 @@
 ---
 const { title } = Astro.props;
+const { titleCa } = Astro.props;
+const { titleEs } = Astro.props;
+
+let usuari;
+
+if (Astro.cookies.has("usuari")) {
+  const cookie = Astro.cookies.get("usuari");
+  usuari = cookie.value;
+}
+
+let idioma;
+
+if (Astro.cookies.has("idioma")) {
+  const cookie = Astro.cookies.get("idioma");
+  idioma = cookie.value;
+} else {
+  Astro.cookies.set("idioma", "ca");
+  idioma = "ca";
+}
 ---
 
-<h1
-    class="text-center text-slate-700 p-2 mb-4 text-2xl border-b border-b-slate-500 "
->
-    {title}
-</h1>
+<div>
+  <div
+    class="flex justify-between items-baseline text-slate-700 p-2 mb-4 border-b border-b-slate-500"
+  >
+    <h1 class="text-2xl">Eladio el Recetario</h1>
+
+    <div>
+      <span>
+        <a href="/catalan">CA</a>
+        <a href="/espanol">ES</a>
+      </span>
+      {
+        usuari ? (
+          <a href="/logout" class="underline">
+            {usuari} (Logout)
+          </a>
+        ) : (
+          <a href="/login" class="underline">
+            Login
+          </a>
+        )
+      }
+    </div>
+  </div>
+  <h1 class="text-2xl text-center">{idioma === "ca" ? titleCa : titleEs}</h1>
+  <h1 class="text-2xl text-center">{title}</h1>
+</div>
+<!-- 
+
+  idioma == "ca" ? "Cuina" : "Cocina"
+ -->

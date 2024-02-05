@@ -1,53 +1,34 @@
 ---
-import Layout from "../layouts/Layout.astro"
-import ReceptesController from '../classes/ReceptesController';
+import Layout from "../layouts/Layout.astro";
+import ReceptesController from "../classes/ReceptesController";
 import Recepta from "../components/Recepta.astro";
 // Exemple d'ús:
 
 const receptesController = new ReceptesController();
 
 const receptes = await receptesController.getAllReceptes();
-/* receptes té el format:
-{
-    list: [
-      {
-        Id: 1,
-        nom: 'ous amb bacon',
-        CreatedAt: '2024-02-01 09:44:44+00:00',
-        UpdatedAt: '2024-02-01 09:46:32+00:00',
-        foto: 'https://baconmockup.com/400/300/',
-        descripcio: 'Ingredients:\n' +
-          '* Dos ous\n' +
-          '* Unes llesques de bacon\n' +
-          'Preparació:\n' +
-          '* Fregir el bacon amb oli d\'oliva a foc mig fins que quedi torradet.\n' +
-          '* Fregir els ous amb oli abundant.\n' +
-          ' \n' +
-          ' '
-      },
-	  {
-		...
-	  }
-         ],
-    pageInfo: {
-      totalRows: 2,
-      page: 1,
-      pageSize: 25,
-      isFirstPage: true,
-      isLastPage: true
-    }
-  }
-*/
+let cookie;
+if (Astro.cookies.has("usuari")) {
+  cookie = Astro.cookies.get("usuari").value;
 
-
+  //const cookie = Astro.cookies.get("usuari")
+} else {
+  return Astro.redirect("/login");
+}
+let userList = receptes.list.filter((e) => {
+  return e.usuari === cookie;
+});
 ---
 
-<Layout title="hola">
+<Layout titleCa="Receptes" titleEs="Recetas">
+  <div
+    class="bg-emerald-300 w-10 h-10 py-1 px-3 bottom-0 rounded-full hover:bg-emerald-500 shadow-lg shadow-slate-500 hover:shadow-emerald-500 my-2 sticky top-4"
+  >
+    <a class="text-xl" href="/receptes/nova">+</a>
+  </div>
+  <div></div>
 
-	<a href="/receptes/nova">Nova recepta</a>
-	<hr>
-		{receptes.list.map(e => <Recepta dades={e} />)}
-
-	
-
+  <div class="y-auto grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+    {userList.map((e) => <Recepta dades={e} />)}
+  </div>
 </Layout>
